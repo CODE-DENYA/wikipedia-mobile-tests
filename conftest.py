@@ -21,7 +21,7 @@ def driver():
 
     # Подключаемся к Appium Server
     driver = webdriver.Remote("http://127.0.0.1:4723", options=options)
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(0)
 
     yield driver
 

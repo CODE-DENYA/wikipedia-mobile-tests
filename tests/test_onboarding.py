@@ -1,15 +1,13 @@
-from appium.webdriver.common.appiumby import AppiumBy
+from pages.onboarding_page import OnboardingPage
 
 
-def test_onboarding_screen_is_displayed(driver):
-    """Проверка загрузки первого экрана онбординга."""
+def test_onboarding_flow(driver):
+    """Проверка динамического прохождения онбординга."""
+    onboarding = OnboardingPage(driver)
 
-    # Поиск заголовка / текста на первом экране
-    primary_text = driver.find_element(
-        AppiumBy.XPATH,
-        "//*[contains(@text, 'All the world') or contains(@text, 'Free encyclopedia') or contains(@text, 'Wikipedia')]",
-    )
+    assert (
+        onboarding.is_primary_text_displayed()
+    ), "Первый экран онбординга не отображается"
 
-    assert primary_text.is_displayed(), (
-        "Заголовок онбординга должен отображаться"
-    )
+    # Проходим все шаги независимо от их точного количества
+    onboarding.complete_onboarding()
