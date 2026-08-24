@@ -18,15 +18,6 @@ class ArticlePage:
         "//android.webkit.WebView//android.view.View[string-length(@text) > 0]",
     )
 
-    POPUP_DISMISS_LOCATORS = [
-        (AppiumBy.XPATH, "//*[@text='Got it' or @text='GOT IT' or @text='Got It']"),
-        (
-            AppiumBy.XPATH,
-            "//*[contains(@text, 'GOT IT') or contains(@text, 'Got it') or contains(@text, 'ПОНЯТНО')]",
-        ),
-        (AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"),
-    ]
-
     SAVE_BUTTON = (AppiumBy.ID, "org.wikipedia.alpha:id/page_save")
     SAVE_BOTTOM_SHEET = (
         AppiumBy.XPATH,
@@ -35,15 +26,36 @@ class ArticlePage:
     NAVIGATE_UP = (AppiumBy.ACCESSIBILITY_ID, "Navigate up")
 
     def _dismiss_popups(self):
-        """Закрывает всплывающие подсказки."""
-        for by, value in self.POPUP_DISMISS_LOCATORS:
-            elements = self.driver.find_elements(by, value)
-            if elements:
-                try:
-                    elements[0].click()
+        """Гарантированно уничтожает всплывающие окна и рекламные модалки на странице статьи."""
+        try:
+            close_btn = WebDriverWait(self.driver, 1.0).until(
+                EC.element_to_be_clickable((AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"))
+            )
+            close_btn.click()
+            time.sleep(0.5)
+            return
+        except Exception:
+            pass
+
+        try:
+            close_by_desc = WebDriverWait(self.driver, 0.8).until(
+                EC.element_to_be_clickable((AppiumBy.ACCESSIBILITY_ID, "Close"))
+            )
+            close_by_desc.click()
+            time.sleep(0.5)
+            return
+        except Exception:
+            pass
+
+        for text in ["Got it", "GOT IT", "Got It", "Play", "Not now", "Skip"]:
+            try:
+                btn = self.driver.find_elements(AppiumBy.XPATH, f"//*[@text='{text}']")
+                if btn:
+                    btn[0].click()
                     time.sleep(0.5)
-                except Exception:
-                    pass
+                    break
+            except Exception:
+                pass
 
     @allure.step("Получение заголовка статьи")
     def get_article_title(self) -> str:
@@ -55,7 +67,7 @@ class ArticlePage:
             elements = self.driver.find_elements(*self.ARTICLE_TITLE)
             for el in elements:
                 text = el.text.strip()
-                if text and text not in ["Got it", "Customize your toolbar"]:
+                if text and text not in ["Got it", "Customize your toolbar", "Introducing Wikipedia games"]:
                     return text
 
             time.sleep(0.5)
@@ -90,6 +102,7 @@ class ArticlePage:
         """Выходит из статьи и режима поиска на главный экран."""
         end_time = time.time() + 12
         while time.time() < end_time:
+            self._dismiss_popups()
             # Прекращаем выход, если на экране появилось нижнее меню с иконкой Saved
             if self.driver.find_elements(AppiumBy.ID, "org.wikipedia.alpha:id/main_nav_tab_container"):
                 return
