@@ -1,4 +1,5 @@
 import time
+import allure
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -10,7 +11,6 @@ class ArticlePage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 15)
 
-    # Ищем элементы внутри WebView или нативные TextView, у которых text НЕ пустой
     ARTICLE_TITLE = (
         AppiumBy.XPATH,
         "//*[contains(@resource-id, 'page_title_text') or contains(@resource-id, 'view_page_header_text')] | "
@@ -18,14 +18,12 @@ class ArticlePage:
         "//android.webkit.WebView//android.view.View[string-length(@text) > 0]"
     )
 
-    # Точные селекторы для закрытия подсказок и тултипов
     POPUP_DISMISS_LOCATORS = [
         (AppiumBy.XPATH, "//*[@text='Got it' or @text='GOT IT' or @text='Got It']"),
         (AppiumBy.XPATH, "//*[contains(@text, 'GOT IT') or contains(@text, 'Got it') or contains(@text, 'ПОНЯТНО')]"),
         (AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"),
     ]
 
-    # Кнопка Save и шторка сохранения
     SAVE_BUTTON = (AppiumBy.ID, "org.wikipedia.alpha:id/page_save")
     SAVE_BOTTOM_SHEET = (
         AppiumBy.XPATH,
@@ -43,6 +41,7 @@ class ArticlePage:
                 except Exception:
                     pass
 
+    @allure.step("Получение заголовка статьи")
     def get_article_title(self) -> str:
         """Считывает заголовок статьи, пропуская пустые контейнеры."""
         end_time = time.time() + 15
@@ -61,6 +60,7 @@ class ArticlePage:
             EC.visibility_of_element_located(self.ARTICLE_TITLE)
         ).text
 
+    @allure.step("Клик по кнопке 'Save'")
     def click_save_button(self):
         """Кликает по кнопке Save на нижней панели статьи."""
         save_btn = self.wait.until(
@@ -68,6 +68,7 @@ class ArticlePage:
         )
         save_btn.click()
 
+    @allure.step("Проверка отображения шторки сохранения")
     def is_save_sheet_displayed(self) -> bool:
         """Проверяет появление шторки добавления в коллекции."""
         try:

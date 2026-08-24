@@ -1,3 +1,4 @@
+import allure
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -8,7 +9,6 @@ class OnboardingPage:
 
     def __init__(self, driver):
         self.driver = driver
-        # Обнуляем неявное ожидание, чтобы исключить зависания при поиске
         self.driver.implicitly_wait(0)
         self.wait = WebDriverWait(driver, 3)
 
@@ -17,11 +17,11 @@ class OnboardingPage:
         "//*[contains(@text, 'All the world') or contains(@text, 'Free encyclopedia')]",
     )
 
-    # Локаторы по Accessibility ID (content-desc)
     FORWARD_BTN = (AppiumBy.ACCESSIBILITY_ID, "Forward")
     NEXT_BTN = (AppiumBy.ACCESSIBILITY_ID, "Next")
     DONE_BTN = (AppiumBy.ACCESSIBILITY_ID, "Get started")
 
+    @allure.step("Проверка отображения первого экрана онбординга")
     def is_primary_text_displayed(self) -> bool:
         """Безопасная проверка наличия первого экрана онбординга."""
         try:
@@ -31,6 +31,7 @@ class OnboardingPage:
         except TimeoutException:
             return False
 
+    @allure.step("Мгновенное прохождение онбординга")
     def complete_onboarding(self):
         """Мгновенное прохождение онбординга через проверочные клики."""
         for _ in range(8):
