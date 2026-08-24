@@ -3,3 +3,8 @@ __pycache__/
 .pytest_cache/
 *.log
 .vscode/
+
+# Allure reports and results
+allure-results/
+allure-report/
+.allure/
