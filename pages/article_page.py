@@ -25,6 +25,13 @@ class ArticlePage:
         (AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"),
     ]
 
+    # Кнопка Save и шторка сохранения
+    SAVE_BUTTON = (AppiumBy.ID, "org.wikipedia.alpha:id/page_save")
+    SAVE_BOTTOM_SHEET = (
+        AppiumBy.XPATH,
+        "//*[@resource-id='org.wikipedia.alpha:id/design_bottom_sheet'] | //*[contains(@text, 'Collect the articles')]",
+    )
+
     def _dismiss_popups(self):
         """Закрывает всплывающие подсказки (включая Customize your toolbar)."""
         for by, value in self.POPUP_DISMISS_LOCATORS:
@@ -45,7 +52,6 @@ class ArticlePage:
             elements = self.driver.find_elements(*self.ARTICLE_TITLE)
             for el in elements:
                 text = el.text.strip()
-                # Отсекаем служебные тексты и берем первый реальный заголовок
                 if text and text not in ["Got it", "Customize your toolbar"]:
                     return text
 
@@ -54,3 +60,21 @@ class ArticlePage:
         return self.wait.until(
             EC.visibility_of_element_located(self.ARTICLE_TITLE)
         ).text
+
+    def click_save_button(self):
+        """Кликает по кнопке Save на нижней панели статьи."""
+        save_btn = self.wait.until(
+            EC.element_to_be_clickable(self.SAVE_BUTTON)
+        )
+        save_btn.click()
+
+    def is_save_sheet_displayed(self) -> bool:
+        """Проверяет появление шторки добавления в коллекции."""
+        try:
+            return bool(
+                self.wait.until(
+                    EC.visibility_of_element_located(self.SAVE_BOTTOM_SHEET)
+                )
+            )
+        except Exception:
+            return False
