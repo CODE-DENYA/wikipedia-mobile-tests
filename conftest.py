@@ -2,6 +2,7 @@ import os
 import pytest
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
+from pages.onboarding_page import OnboardingPage
 
 
 @pytest.fixture
@@ -27,3 +28,20 @@ def driver():
 
     # Завершаем сессию после каждого теста
     driver.quit()
+
+
+@pytest.fixture
+def onboarding_page(driver):
+    """Фикстура для создания экземпляра страницы онбординга."""
+    return OnboardingPage(driver)
+
+
+@pytest.fixture
+def skip_onboarding(onboarding_page):
+    """
+    Предусловие (Precondition):
+    Если открыт онбординг, автоматически проходим его,
+    чтобы функциональный тест сразу стартовал с главного экрана.
+    """
+    if onboarding_page.is_primary_text_displayed():
+        onboarding_page.complete_onboarding()
