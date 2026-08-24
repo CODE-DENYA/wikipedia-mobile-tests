@@ -74,3 +74,10 @@ class MainPage:
             EC.visibility_of_element_located(self.SEARCH_RESULT_TITLE)
         )
         return result.text
+
+    def click_first_result(self):
+        """Кликает по первому результату в списке поиска."""
+        result = self.wait.until(
+            EC.element_to_be_clickable(self.SEARCH_RESULT_TITLE)
+        )
+        result.click()
