@@ -11,6 +11,7 @@ class MainPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
 
+    # Локаторы поиска
     NAV_SEARCH_TAB = (AppiumBy.ID, "org.wikipedia.alpha:id/nav_tab_search")
     SEARCH_CARD = (AppiumBy.ID, "org.wikipedia.alpha:id/search_card")
     SEARCH_INPUT = (AppiumBy.ID, "org.wikipedia.alpha:id/search_src_text")
@@ -21,6 +22,18 @@ class MainPage:
         AppiumBy.XPATH,
         "//*[contains(@resource-id, 'page_list_item_title') or contains(@resource-id, 'fragment_search_results')]//android.widget.TextView",
     )
+
+    # Нижняя навигация
+    NAV_HOME = (
+        AppiumBy.XPATH,
+        "//*[@resource-id='org.wikipedia.alpha:id/nav_tab_explore' or @content-desc='Home' or @content-desc='Explore']",
+    )
+    NAV_SAVED = (AppiumBy.ACCESSIBILITY_ID, "Saved")
+    NAV_MORE = (AppiumBy.ACCESSIBILITY_ID, "More")
+
+    # Элементы открытых экранов
+    SAVED_ALL_ARTICLES_TAB = (AppiumBy.XPATH, "//*[@text='All articles']")
+    MORE_LOGIN_BUTTON = (AppiumBy.ID, "org.wikipedia.alpha:id/main_drawer_login_button")
 
     @allure.step("Открытие экрана поиска")
     def open_search(self):
@@ -90,3 +103,27 @@ class MainPage:
             EC.visibility_of_element_located(self.SEARCH_INPUT)
         )
         return search_input.text
+
+    @allure.step("Переход на вкладку 'Home'")
+    def open_home_tab(self):
+        if self.driver.find_elements(*self.MORE_LOGIN_BUTTON) or self.driver.find_elements(*self.BOTTOM_SHEET):
+            self.driver.back()
+            time.sleep(0.5)
+
+        self.wait.until(EC.element_to_be_clickable(self.NAV_HOME)).click()
+
+    @allure.step("Переход на вкладку 'Saved'")
+    def open_saved_tab(self):
+        self.wait.until(EC.element_to_be_clickable(self.NAV_SAVED)).click()
+
+    @allure.step("Переход в меню 'More'")
+    def open_more_tab(self):
+        self.wait.until(EC.element_to_be_clickable(self.NAV_MORE)).click()
+
+    @allure.step("Проверка отображения экрана 'Saved'")
+    def is_saved_tab_displayed(self) -> bool:
+        return self.wait.until(EC.visibility_of_element_located(self.SAVED_ALL_ARTICLES_TAB)).is_displayed()
+
+    @allure.step("Проверка отображения меню 'More'")
+    def is_more_menu_displayed(self) -> bool:
+        return self.wait.until(EC.visibility_of_element_located(self.MORE_LOGIN_BUTTON)).is_displayed()
