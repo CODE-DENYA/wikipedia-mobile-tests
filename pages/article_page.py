@@ -15,12 +15,15 @@ class ArticlePage:
         AppiumBy.XPATH,
         "//*[contains(@resource-id, 'page_title_text') or contains(@resource-id, 'view_page_header_text')] | "
         "//android.webkit.WebView//android.widget.TextView[string-length(@text) > 0] | "
-        "//android.webkit.WebView//android.view.View[string-length(@text) > 0]"
+        "//android.webkit.WebView//android.view.View[string-length(@text) > 0]",
     )
 
     POPUP_DISMISS_LOCATORS = [
         (AppiumBy.XPATH, "//*[@text='Got it' or @text='GOT IT' or @text='Got It']"),
-        (AppiumBy.XPATH, "//*[contains(@text, 'GOT IT') or contains(@text, 'Got it') or contains(@text, 'ПОНЯТНО')]"),
+        (
+            AppiumBy.XPATH,
+            "//*[contains(@text, 'GOT IT') or contains(@text, 'Got it') or contains(@text, 'ПОНЯТНО')]",
+        ),
         (AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"),
     ]
 
@@ -29,9 +32,10 @@ class ArticlePage:
         AppiumBy.XPATH,
         "//*[@resource-id='org.wikipedia.alpha:id/design_bottom_sheet'] | //*[contains(@text, 'Collect the articles')]",
     )
+    NAVIGATE_UP = (AppiumBy.ACCESSIBILITY_ID, "Navigate up")
 
     def _dismiss_popups(self):
-        """Закрывает всплывающие подсказки (включая Customize your toolbar)."""
+        """Закрывает всплывающие подсказки."""
         for by, value in self.POPUP_DISMISS_LOCATORS:
             elements = self.driver.find_elements(by, value)
             if elements:
@@ -43,7 +47,7 @@ class ArticlePage:
 
     @allure.step("Получение заголовка статьи")
     def get_article_title(self) -> str:
-        """Считывает заголовок статьи, пропуская пустые контейнеры."""
+        """Считывает заголовок статьи."""
         end_time = time.time() + 15
         while time.time() < end_time:
             self._dismiss_popups()
@@ -63,6 +67,7 @@ class ArticlePage:
     @allure.step("Клик по кнопке 'Save'")
     def click_save_button(self):
         """Кликает по кнопке Save на нижней панели статьи."""
+        self._dismiss_popups()
         save_btn = self.wait.until(
             EC.element_to_be_clickable(self.SAVE_BUTTON)
         )
@@ -79,3 +84,24 @@ class ArticlePage:
             )
         except Exception:
             return False
+
+    @allure.step("Закрытие статьи и возврат на главный экран")
+    def close_article_and_return_to_main(self):
+        """Выходит из статьи и режима поиска на главный экран."""
+        end_time = time.time() + 12
+        while time.time() < end_time:
+            # Прекращаем выход, если на экране появилось нижнее меню с иконкой Saved
+            if self.driver.find_elements(AppiumBy.ID, "org.wikipedia.alpha:id/main_nav_tab_container"):
+                return
+
+            # Нажимаем на стрелку Navigate up если она есть, иначе системную кнопку Back
+            nav_buttons = self.driver.find_elements(*self.NAVIGATE_UP)
+            if nav_buttons:
+                try:
+                    nav_buttons[0].click()
+                except Exception:
+                    self.driver.back()
+            else:
+                self.driver.back()
+
+            time.sleep(0.8)

@@ -28,11 +28,14 @@ class MainPage:
         AppiumBy.XPATH,
         "//*[@resource-id='org.wikipedia.alpha:id/nav_tab_explore' or @content-desc='Home' or @content-desc='Explore']",
     )
-    NAV_SAVED = (AppiumBy.ACCESSIBILITY_ID, "Saved")
+    NAV_SAVED = (
+        AppiumBy.XPATH,
+        "//*[@resource-id='org.wikipedia.alpha:id/nav_tab_reading_lists' or @content-desc='Saved']",
+    )
     NAV_MORE = (AppiumBy.ACCESSIBILITY_ID, "More")
 
     # Элементы открытых экранов
-    SAVED_ALL_ARTICLES_TAB = (AppiumBy.XPATH, "//*[@text='All articles']")
+    SAVED_HEADER = (AppiumBy.XPATH, "//*[@text='Saved' or @text='All articles']")
     MORE_LOGIN_BUTTON = (AppiumBy.ID, "org.wikipedia.alpha:id/main_drawer_login_button")
 
     @allure.step("Открытие экрана поиска")
@@ -114,7 +117,8 @@ class MainPage:
 
     @allure.step("Переход на вкладку 'Saved'")
     def open_saved_tab(self):
-        self.wait.until(EC.element_to_be_clickable(self.NAV_SAVED)).click()
+        saved_btn = self.wait.until(EC.element_to_be_clickable(self.NAV_SAVED))
+        saved_btn.click()
 
     @allure.step("Переход в меню 'More'")
     def open_more_tab(self):
@@ -122,8 +126,14 @@ class MainPage:
 
     @allure.step("Проверка отображения экрана 'Saved'")
     def is_saved_tab_displayed(self) -> bool:
-        return self.wait.until(EC.visibility_of_element_located(self.SAVED_ALL_ARTICLES_TAB)).is_displayed()
+        return self.wait.until(EC.visibility_of_element_located(self.SAVED_HEADER)).is_displayed()
 
     @allure.step("Проверка отображения меню 'More'")
     def is_more_menu_displayed(self) -> bool:
         return self.wait.until(EC.visibility_of_element_located(self.MORE_LOGIN_BUTTON)).is_displayed()
+
+    @allure.step("Проверка наличия статьи '{title}' в списке сохраненных")
+    def is_article_present_in_saved(self, title: str) -> bool:
+        self.wait.until(EC.visibility_of_element_located(self.SAVED_HEADER))
+        locator = (AppiumBy.XPATH, f"//*[contains(@text, '{title}')]")
+        return len(self.driver.find_elements(*locator)) > 0
