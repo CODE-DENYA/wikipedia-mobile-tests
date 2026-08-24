@@ -1,0 +1,2 @@
+
+[DEBUG] Текст в поле после очистки: 'Search Wikipedia'
