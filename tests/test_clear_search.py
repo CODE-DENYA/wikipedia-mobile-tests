@@ -2,6 +2,8 @@ import allure
 from pages.main_page import MainPage
 
 
+@allure.epic("Поиск")
+@allure.title("Проверка очистки введенного запроса по кнопке 'Крестик'")
 def test_clear_search_query(driver, skip_onboarding):
     """Тест очистки введенного запроса по кнопке 'Крестик'."""
     main_page = MainPage(driver)

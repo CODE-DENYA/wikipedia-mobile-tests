@@ -3,6 +3,8 @@ from pages.main_page import MainPage
 from pages.article_page import ArticlePage
 
 
+@allure.epic("Статьи")
+@allure.title("Проверка перехода в статью из результатов поиска")
 def test_open_article(driver, skip_onboarding):
     """Тест перехода в статью из результатов поиска."""
     main_page = MainPage(driver)

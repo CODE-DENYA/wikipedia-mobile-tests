@@ -3,6 +3,8 @@ from pages.main_page import MainPage
 from pages.article_page import ArticlePage
 
 
+@allure.epic("Закладки")
+@allure.title("E2E-тест сохранения статьи в закладки и проверки её наличия в разделе Saved")
 def test_save_article_to_list(driver, skip_onboarding):
     """E2E-тест сохранения статьи в закладки и проверки её наличия в разделе Saved."""
     main_page = MainPage(driver)

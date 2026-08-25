@@ -2,6 +2,8 @@ import allure
 from pages.onboarding_page import OnboardingPage
 
 
+@allure.epic("Онбординг")
+@allure.title("Проверка динамического прохождения онбординга")
 def test_onboarding_flow(driver):
     """Проверка динамического прохождения онбординга."""
     onboarding = OnboardingPage(driver)

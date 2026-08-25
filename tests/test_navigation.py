@@ -2,6 +2,8 @@ import allure
 from pages.main_page import MainPage
 
 
+@allure.epic("Навигация")
+@allure.title("Проверка переключения между табами нижнего меню")
 def test_navigate_bottom_tabs(driver, skip_onboarding):
     """Тест переключения между табами нижнего меню (Saved, More, Home)."""
     main_page = MainPage(driver)

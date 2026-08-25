@@ -2,6 +2,8 @@ import allure
 from pages.main_page import MainPage
 
 
+@allure.epic("Поиск")
+@allure.title("Проверка поиска статьи на Wikipedia")
 def test_search_article(driver, skip_onboarding):
     """Тест поиска статьи на Wikipedia."""
     main_page = MainPage(driver)
