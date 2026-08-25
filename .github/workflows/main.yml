@@ -73,11 +73,10 @@ jobs:
           profile: pixel
           emulator-options: -no-window -no-snapshot-save -noaudio -no-boot-anim
           script: |
-            appium &
-            APPIUM_PID=$!
+            appium > appium.log 2>&1 &
             sleep 8
             pytest
-            kill $APPIUM_PID || true
+            fuser -k 4723/tcp || true
 
       - name: Save Allure Results
         if: always()
