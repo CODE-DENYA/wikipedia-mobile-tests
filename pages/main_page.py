@@ -13,7 +13,7 @@ class MainPage:
         self.wait = WebDriverWait(driver, 10)
         self.fast_wait = WebDriverWait(driver, 2.0)
 
-    # Локаторы поиска
+    # Р›РѕРєР°С‚РѕСЂС‹ РїРѕРёСЃРєР°
     NAV_SEARCH_TAB = (AppiumBy.ID, "org.wikipedia.alpha:id/nav_tab_search")
     SEARCH_CARD = (AppiumBy.ID, "org.wikipedia.alpha:id/search_card")
     SEARCH_INPUT = (AppiumBy.ID, "org.wikipedia.alpha:id/search_src_text")
@@ -23,13 +23,15 @@ class MainPage:
 
     SEARCH_RESULT_TITLE = (
         AppiumBy.XPATH,
-        "//*[contains(@resource-id, 'page_list_item_title') or contains(@resource-id, 'fragment_search_results')]//android.widget.TextView",
+        "//*[contains(@resource-id, 'page_list_item_title') or "
+        "contains(@resource-id, 'fragment_search_results')]//android.widget.TextView",
     )
 
-    # Нижняя навигация
+    # РќРёР¶РЅСЏСЏ РЅР°РІРёРіР°С†РёСЏ
     NAV_HOME = (
         AppiumBy.XPATH,
-        "//*[@resource-id='org.wikipedia.alpha:id/nav_tab_explore' or @content-desc='Home' or @content-desc='Explore']",
+        "//*[@resource-id='org.wikipedia.alpha:id/nav_tab_explore' or "
+        "@content-desc='Home' or @content-desc='Explore']",
     )
     NAV_SAVED = (
         AppiumBy.XPATH,
@@ -37,20 +39,20 @@ class MainPage:
     )
     NAV_MORE = (AppiumBy.ACCESSIBILITY_ID, "More")
 
-    # Элементы меню More и Settings
+    # Р­Р»РµРјРµРЅС‚С‹ РјРµРЅСЋ More Рё Settings
     SETTINGS_BUTTON = (AppiumBy.ID, "org.wikipedia.alpha:id/main_drawer_settings_container")
     SETTINGS_HEADER_TITLE = (AppiumBy.XPATH, "//android.widget.TextView[@text='Settings']")
 
-    # Элементы открытых экранов
+    # Р­Р»РµРјРµРЅС‚С‹ РѕС‚РєСЂС‹С‚С‹С… СЌРєСЂР°РЅРѕРІ
     SAVED_HEADER = (AppiumBy.XPATH, "//*[@text='Saved' or @text='All articles']")
     MORE_LOGIN_BUTTON = (AppiumBy.ID, "org.wikipedia.alpha:id/main_drawer_login_button")
 
-    # Локаторы истории поиска
+    # Р›РѕРєР°С‚РѕСЂС‹ РёСЃС‚РѕСЂРёРё РїРѕРёСЃРєР°
     CLEAR_HISTORY_BTN = (AppiumBy.ID, "org.wikipedia.alpha:id/history_delete")
     HISTORY_ITEM_TITLE = (AppiumBy.ID, "org.wikipedia.alpha:id/page_list_item_title")
 
     def _dismiss_popups(self):
-        """Быстро закрывает известные модальные окна без задержек."""
+        """Р‘С‹СЃС‚СЂРѕ Р·Р°РєСЂС‹РІР°РµС‚ РёР·РІРµСЃС‚РЅС‹Рµ РјРѕРґР°Р»СЊРЅС‹Рµ РѕРєРЅР° Р±РµР· Р·Р°РґРµСЂР¶РµРє."""
         popups = [
             (AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"),
             (AppiumBy.ACCESSIBILITY_ID, "Close")
@@ -67,9 +69,9 @@ class MainPage:
                 elements[0].click()
                 return
 
-    @allure.step("Открытие экрана поиска")
+    @allure.step("РћС‚РєСЂС‹С‚РёРµ СЌРєСЂР°РЅР° РїРѕРёСЃРєР°")
     def open_search(self):
-        """Устойчивое открытие поиска с циклом ретраев против лагов анимации Android."""
+        """РЈСЃС‚РѕР№С‡РёРІРѕРµ РѕС‚РєСЂС‹С‚РёРµ РїРѕРёСЃРєР° СЃ С†РёРєР»РѕРј СЂРµС‚СЂР°РµРІ РїСЂРѕС‚РёРІ Р»Р°РіРѕРІ Р°РЅРёРјР°С†РёРё Android."""
         end_time = time.time() + 15
         while time.time() < end_time:
             self._dismiss_popups()
@@ -102,7 +104,7 @@ class MainPage:
 
         self.wait.until(EC.visibility_of_element_located(self.SEARCH_INPUT))
 
-    @allure.step("Ввод поискового запроса: '{query}'")
+    @allure.step("Р’РІРѕРґ РїРѕРёСЃРєРѕРІРѕРіРѕ Р·Р°РїСЂРѕСЃР°: '{query}'")
     def type_search_query(self, query: str):
         self._dismiss_popups()
         search_field = self.wait.until(
@@ -112,7 +114,7 @@ class MainPage:
         search_field.clear()
         search_field.send_keys(query)
 
-    @allure.step("Получение текста первого результата поиска")
+    @allure.step("РџРѕР»СѓС‡РµРЅРёРµ С‚РµРєСЃС‚Р° РїРµСЂРІРѕРіРѕ СЂРµР·СѓР»СЊС‚Р°С‚Р° РїРѕРёСЃРєР°")
     def get_first_result_text(self) -> str:
         self._dismiss_popups()
         result = self.wait.until(
@@ -120,7 +122,7 @@ class MainPage:
         )
         return result.text
 
-    @allure.step("Клик по первому результату поиска")
+    @allure.step("РљР»РёРє РїРѕ РїРµСЂРІРѕРјСѓ СЂРµР·СѓР»СЊС‚Р°С‚Сѓ РїРѕРёСЃРєР°")
     def click_first_result(self):
         self._dismiss_popups()
         result = self.wait.until(
@@ -128,21 +130,21 @@ class MainPage:
         )
         result.click()
 
-    @allure.step("Нажатие на кнопку очистки поиска (крестик)")
+    @allure.step("РќР°Р¶Р°С‚РёРµ РЅР° РєРЅРѕРїРєСѓ РѕС‡РёСЃС‚РєРё РїРѕРёСЃРєР° (РєСЂРµСЃС‚РёРє)")
     def click_clear_search(self):
         clear_btn = self.wait.until(
             EC.element_to_be_clickable(self.SEARCH_CLOSE_BTN)
         )
         clear_btn.click()
 
-    @allure.step("Получение текущего текста из поля ввода поиска")
+    @allure.step("РџРѕР»СѓС‡РµРЅРёРµ С‚РµРєСѓС‰РµРіРѕ С‚РµРєСЃС‚Р° РёР· РїРѕР»СЏ РІРІРѕРґР° РїРѕРёСЃРєР°")
     def get_search_input_text(self) -> str:
         search_input = self.wait.until(
             EC.visibility_of_element_located(self.SEARCH_INPUT)
         )
         return search_input.text
 
-    @allure.step("Переход на вкладку 'Home'")
+    @allure.step("РџРµСЂРµС…РѕРґ РЅР° РІРєР»Р°РґРєСѓ 'Home'")
     def open_home_tab(self):
         self._dismiss_popups()
         if self.driver.find_elements(*self.MORE_LOGIN_BUTTON) or self.driver.find_elements(*self.BOTTOM_SHEET):
@@ -150,58 +152,58 @@ class MainPage:
 
         self.wait.until(EC.element_to_be_clickable(self.NAV_HOME)).click()
 
-    @allure.step("Переход на вкладку 'Saved'")
+    @allure.step("РџРµСЂРµС…РѕРґ РЅР° РІРєР»Р°РґРєСѓ 'Saved'")
     def open_saved_tab(self):
         self._dismiss_popups()
         saved_btn = self.wait.until(EC.element_to_be_clickable(self.NAV_SAVED))
         saved_btn.click()
 
-    @allure.step("Переход в меню 'More'")
+    @allure.step("РџРµСЂРµС…РѕРґ РІ РјРµРЅСЋ 'More'")
     def open_more_tab(self):
         self._dismiss_popups()
         self.wait.until(EC.element_to_be_clickable(self.NAV_MORE)).click()
 
-    @allure.step("Переход в раздел 'Settings' из меню More")
+    @allure.step("РџРµСЂРµС…РѕРґ РІ СЂР°Р·РґРµР» 'Settings' РёР· РјРµРЅСЋ More")
     def open_settings(self):
         self.open_more_tab()
         self.wait.until(EC.element_to_be_clickable(self.SETTINGS_BUTTON)).click()
 
-    @allure.step("Проверка отображения экрана 'Settings'")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ СЌРєСЂР°РЅР° 'Settings'")
     def is_settings_title_displayed(self) -> bool:
         try:
             return bool(self.wait.until(EC.visibility_of_element_located(self.SETTINGS_HEADER_TITLE)))
         except TimeoutException:
             return False
 
-    @allure.step("Проверка отображения надписи 'No results'")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РЅР°РґРїРёСЃРё 'No results'")
     def is_no_results_displayed(self) -> bool:
         try:
             return bool(self.wait.until(EC.visibility_of_element_located(self.NO_RESULTS_TEXT)))
         except TimeoutException:
             return False
 
-    @allure.step("Проверка отображения экрана 'Saved'")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ СЌРєСЂР°РЅР° 'Saved'")
     def is_saved_tab_displayed(self) -> bool:
         return self.wait.until(EC.visibility_of_element_located(self.SAVED_HEADER)).is_displayed()
 
-    @allure.step("Проверка отображения меню 'More'")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РјРµРЅСЋ 'More'")
     def is_more_menu_displayed(self) -> bool:
         return self.wait.until(EC.visibility_of_element_located(self.MORE_LOGIN_BUTTON)).is_displayed()
 
-    @allure.step("Проверка наличия статьи '{title}' в списке сохраненных")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ СЃС‚Р°С‚СЊРё '{title}' РІ СЃРїРёСЃРєРµ СЃРѕС…СЂР°РЅРµРЅРЅС‹С…")
     def is_article_present_in_saved(self, title: str) -> bool:
         self.wait.until(EC.visibility_of_element_located(self.SAVED_HEADER))
         locator = (AppiumBy.XPATH, f"//*[contains(@text, '{title}')]")
         return len(self.driver.find_elements(*locator)) > 0
 
-    @allure.step("Очистка всей истории поиска")
+    @allure.step("РћС‡РёСЃС‚РєР° РІСЃРµР№ РёСЃС‚РѕСЂРёРё РїРѕРёСЃРєР°")
     def clear_search_history(self):
         clear_btn = self.wait.until(EC.element_to_be_clickable(self.CLEAR_HISTORY_BTN))
         clear_btn.click()
 
         confirm_locators = [
             (AppiumBy.ID, "android:id/button1"),
-            (AppiumBy.XPATH, "//*[@text='OK' or @text='Clear' or @text='Удалить' or @text='Yes' or @text='Да']")
+            (AppiumBy.XPATH, "//*[@text='OK' or @text='Clear' or @text='РЈРґР°Р»РёС‚СЊ' or @text='Yes' or @text='Р”Р°']")
         ]
 
         for locator in confirm_locators:
@@ -214,9 +216,12 @@ class MainPage:
 
         time.sleep(0.5)
 
-    @allure.step("Проверка наличия элемента '{title}' в истории поиска")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ СЌР»РµРјРµРЅС‚Р° '{title}' РІ РёСЃС‚РѕСЂРёРё РїРѕРёСЃРєР°")
     def is_history_item_present(self, title: str) -> bool:
-        locator = (AppiumBy.XPATH, f"//*[@resource-id='org.wikipedia.alpha:id/page_list_item_title' and @text='{title}']")
+        locator = (
+            AppiumBy.XPATH,
+            f"//*[@resource-id='org.wikipedia.alpha:id/page_list_item_title' and @text='{title}']",
+        )
         try:
             return bool(self.fast_wait.until(EC.presence_of_element_located(locator)))
         except TimeoutException:

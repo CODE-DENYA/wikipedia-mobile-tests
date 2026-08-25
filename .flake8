@@ -1,0 +1,10 @@
+[flake8]
+exclude = 
+    .venv,
+    venv,
+    .git,
+    __pycache__,
+    allure-results,
+    allure-report
+max-line-length = 120
+ignore = E501

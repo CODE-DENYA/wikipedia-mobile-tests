@@ -27,7 +27,7 @@ class ArticlePage:
     NAVIGATE_UP = (AppiumBy.ACCESSIBILITY_ID, "Navigate up")
 
     def _dismiss_popups(self):
-        """Гарантированно уничтожает всплывающие окна и рекламные модалки на странице статьи."""
+        """Р“Р°СЂР°РЅС‚РёСЂРѕРІР°РЅРЅРѕ СѓРЅРёС‡С‚РѕР¶Р°РµС‚ РІСЃРїР»С‹РІР°СЋС‰РёРµ РѕРєРЅР° Рё СЂРµРєР»Р°РјРЅС‹Рµ РјРѕРґР°Р»РєРё РЅР° СЃС‚СЂР°РЅРёС†Рµ СЃС‚Р°С‚СЊРё."""
         try:
             close_btn = WebDriverWait(self.driver, 1.0).until(
                 EC.element_to_be_clickable((AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"))
@@ -58,9 +58,9 @@ class ArticlePage:
             except Exception:
                 pass
 
-    @allure.step("Получение заголовка статьи")
+    @allure.step("РџРѕР»СѓС‡РµРЅРёРµ Р·Р°РіРѕР»РѕРІРєР° СЃС‚Р°С‚СЊРё")
     def get_article_title(self) -> str:
-        """Считывает заголовок статьи."""
+        """РЎС‡РёС‚С‹РІР°РµС‚ Р·Р°РіРѕР»РѕРІРѕРє СЃС‚Р°С‚СЊРё."""
         end_time = time.time() + 15
         while time.time() < end_time:
             self._dismiss_popups()
@@ -77,18 +77,18 @@ class ArticlePage:
             EC.visibility_of_element_located(self.ARTICLE_TITLE)
         ).text
 
-    @allure.step("Клик по кнопке 'Save'")
+    @allure.step("РљР»РёРє РїРѕ РєРЅРѕРїРєРµ 'Save'")
     def click_save_button(self):
-        """Кликает по кнопке Save на нижней панели статьи."""
+        """РљР»РёРєР°РµС‚ РїРѕ РєРЅРѕРїРєРµ Save РЅР° РЅРёР¶РЅРµР№ РїР°РЅРµР»Рё СЃС‚Р°С‚СЊРё."""
         self._dismiss_popups()
         save_btn = self.wait.until(
             EC.element_to_be_clickable(self.SAVE_BUTTON)
         )
         save_btn.click()
 
-    @allure.step("Проверка отображения шторки сохранения")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ С€С‚РѕСЂРєРё СЃРѕС…СЂР°РЅРµРЅРёСЏ")
     def is_save_sheet_displayed(self) -> bool:
-        """Проверяет появление шторки добавления в коллекции."""
+        """РџСЂРѕРІРµСЂСЏРµС‚ РїРѕСЏРІР»РµРЅРёРµ С€С‚РѕСЂРєРё РґРѕР±Р°РІР»РµРЅРёСЏ РІ РєРѕР»Р»РµРєС†РёРё."""
         try:
             return bool(
                 self.wait.until(
@@ -98,9 +98,9 @@ class ArticlePage:
         except Exception:
             return False
 
-    @allure.step("Проверка наличия активного индикатора 'Saved' в шторке")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ Р°РєС‚РёРІРЅРѕРіРѕ РёРЅРґРёРєР°С‚РѕСЂР° 'Saved' РІ С€С‚РѕСЂРєРµ")
     def is_saved_bookmark_active(self) -> bool:
-        """Проверяет появление зелёной иконки/закладки Saved во всплывающей шторке."""
+        """РџСЂРѕРІРµСЂСЏРµС‚ РїРѕСЏРІР»РµРЅРёРµ Р·РµР»С‘РЅРѕР№ РёРєРѕРЅРєРё/Р·Р°РєР»Р°РґРєРё Saved РІРѕ РІСЃРїР»С‹РІР°СЋС‰РµР№ С€С‚РѕСЂРєРµ."""
         try:
             return bool(
                 self.wait.until(
@@ -110,17 +110,17 @@ class ArticlePage:
         except Exception:
             return False
 
-    @allure.step("Клик по значку 'Saved' во всплывающей шторке")
+    @allure.step("РљР»РёРє РїРѕ Р·РЅР°С‡РєСѓ 'Saved' РІРѕ РІСЃРїР»С‹РІР°СЋС‰РµР№ С€С‚РѕСЂРєРµ")
     def click_saved_bookmark_in_sheet(self):
-        """Нажимает на иконку Saved в шторке для отмены сохранения статьи."""
+        """РќР°Р¶РёРјР°РµС‚ РЅР° РёРєРѕРЅРєСѓ Saved РІ С€С‚РѕСЂРєРµ РґР»СЏ РѕС‚РјРµРЅС‹ СЃРѕС…СЂР°РЅРµРЅРёСЏ СЃС‚Р°С‚СЊРё."""
         bookmark = self.wait.until(
             EC.element_to_be_clickable(self.SAVED_SHEET_BOOKMARK)
         )
         bookmark.click()
 
-    @allure.step("Закрытие статьи и возврат на главный экран")
+    @allure.step("Р—Р°РєСЂС‹С‚РёРµ СЃС‚Р°С‚СЊРё Рё РІРѕР·РІСЂР°С‚ РЅР° РіР»Р°РІРЅС‹Р№ СЌРєСЂР°РЅ")
     def close_article_and_return_to_main(self):
-        """Выходит из статьи и режима поиска на главный экран."""
+        """Р’С‹С…РѕРґРёС‚ РёР· СЃС‚Р°С‚СЊРё Рё СЂРµР¶РёРјР° РїРѕРёСЃРєР° РЅР° РіР»Р°РІРЅС‹Р№ СЌРєСЂР°РЅ."""
         end_time = time.time() + 12
         while time.time() < end_time:
             self._dismiss_popups()

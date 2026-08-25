@@ -21,9 +21,9 @@ class OnboardingPage:
     NEXT_BTN = (AppiumBy.ACCESSIBILITY_ID, "Next")
     DONE_BTN = (AppiumBy.ACCESSIBILITY_ID, "Get started")
 
-    @allure.step("Проверка отображения первого экрана онбординга")
+    @allure.step("РџСЂРѕРІРµСЂРєР° РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РїРµСЂРІРѕРіРѕ СЌРєСЂР°РЅР° РѕРЅР±РѕСЂРґРёРЅРіР°")
     def is_primary_text_displayed(self) -> bool:
-        """Безопасная проверка наличия первого экрана онбординга."""
+        """Р‘РµР·РѕРїР°СЃРЅР°СЏ РїСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ РїРµСЂРІРѕРіРѕ СЌРєСЂР°РЅР° РѕРЅР±РѕСЂРґРёРЅРіР°."""
         try:
             return self.wait.until(
                 EC.visibility_of_element_located(self.PRIMARY_TEXT)
@@ -31,9 +31,9 @@ class OnboardingPage:
         except TimeoutException:
             return False
 
-    @allure.step("Мгновенное прохождение онбординга")
+    @allure.step("РњРіРЅРѕРІРµРЅРЅРѕРµ РїСЂРѕС…РѕР¶РґРµРЅРёРµ РѕРЅР±РѕСЂРґРёРЅРіР°")
     def complete_onboarding(self):
-        """Мгновенное прохождение онбординга через проверочные клики."""
+        """РњРіРЅРѕРІРµРЅРЅРѕРµ РїСЂРѕС…РѕР¶РґРµРЅРёРµ РѕРЅР±РѕСЂРґРёРЅРіР° С‡РµСЂРµР· РїСЂРѕРІРµСЂРѕС‡РЅС‹Рµ РєР»РёРєРё."""
         for _ in range(8):
             if self._click_if_present(self.FORWARD_BTN):
                 continue
@@ -47,7 +47,7 @@ class OnboardingPage:
             break
 
     def _click_if_present(self, locator) -> bool:
-        """Быстрый клик без падения по таймауту."""
+        """Р‘С‹СЃС‚СЂС‹Р№ РєР»РёРє Р±РµР· РїР°РґРµРЅРёСЏ РїРѕ С‚Р°Р№РјР°СѓС‚Сѓ."""
         try:
             elements = self.driver.find_elements(*locator)
             if elements and elements[0].is_displayed():
