@@ -74,9 +74,10 @@ jobs:
           emulator-options: -no-window -no-snapshot-save -noaudio -no-boot-anim
           script: |
             appium &
+            APPIUM_PID=$!
             sleep 8
             pytest
-            pkill -f appium || true
+            kill $APPIUM_PID || true
 
       - name: Save Allure Results
         if: always()
