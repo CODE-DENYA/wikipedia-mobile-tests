@@ -10,15 +10,15 @@ from pages.onboarding_page import OnboardingPage
 
 
 def pytest_addoption(parser):
-    """Р РµРіРёСЃС‚СЂР°С†РёСЏ РєР°СЃС‚РѕРјРЅРѕРіРѕ С„Р»Р°РіР° --slow РґР»СЏ pytest."""
+    """Регистрация кастомного флага --slow для pytest."""
     parser.addoption(
-        "--slow", action="store_true", help="Р—Р°РјРµРґР»РёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ С‚РµСЃС‚РѕРІ РґР»СЏ РІРёР·СѓР°Р»СЊРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ"
+        "--slow", action="store_true", help="Замедлить выполнение тестов для визуального контроля"
     )
 
 
 @pytest.fixture(autouse=True)
 def slow_mode(request, driver):
-    """РђРІС‚РѕРјР°С‚РёС‡РµСЃРєР°СЏ РїР°СѓР·Р° РІ 1 СЃРµРєСѓРЅРґСѓ РїРµСЂРµРґ РєРѕРјР°РЅРґР°РјРё Appium РїСЂРё РїРµСЂРµРґР°С‡Рµ С„Р»Р°РіР° --slow."""
+    """Автоматическая пауза в 1 секунду перед командами Appium при передаче флага --slow."""
     if request.config.getoption("--slow"):
         original_execute = driver.execute
 
@@ -40,7 +40,7 @@ def driver():
     options.app_package = config.APP_PACKAGE
     options.app_activity = config.APP_ACTIVITY
 
-    # РћРїС‚РёРјРёР·Р°С†РёРё СЃРєРѕСЂРѕСЃС‚Рё СЂР°Р±РѕС‚С‹ Appium
+    # Оптимизации скорости работы Appium
     options.skip_logcat_capture = True
     options.disable_window_animation = True
 
@@ -59,11 +59,11 @@ def onboarding_page(driver):
 
 @pytest.fixture
 def skip_onboarding(driver, onboarding_page):
-    """Р“Р°СЂР°РЅС‚РёСЂРѕРІР°РЅРЅС‹Р№ РїСЂРѕРїСѓСЃРє РѕРЅР±РѕСЂРґРёРЅРіР° СЃ Р»СЋР±РѕРіРѕ РµРіРѕ СЌРєСЂР°РЅР°."""
+    """Гарантированный пропуск онбординга с любого его экрана."""
     skip_buttons = driver.find_elements(
         AppiumBy.ID, "org.wikipedia.alpha:id/fragment_onboarding_skip_button"
     ) or driver.find_elements(
-        AppiumBy.XPATH, "//*[@text='Skip' or @text='РџР РћРџРЈРЎРўРРўР¬']"
+        AppiumBy.XPATH, "//*[@text='Skip' or @text='ПРОПУСТИТЬ']"
     )
 
     if skip_buttons:
@@ -79,7 +79,7 @@ def skip_onboarding(driver, onboarding_page):
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    """РЎРЅСЏС‚РёРµ СЃРєСЂРёРЅС€РѕС‚Р° РїСЂРё СЃР±РѕРµ С‚РµСЃС‚Р° Рё РїСЂРёРєСЂРµРїР»РµРЅРёРµ Рє РѕС‚С‡С‘С‚Сѓ Allure."""
+    """Снятие скриншота при сбое теста и прикрепление к отчёту Allure."""
     outcome = yield
     report = outcome.get_result()
 

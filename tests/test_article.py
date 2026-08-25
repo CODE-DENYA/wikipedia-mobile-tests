@@ -4,7 +4,7 @@ from pages.article_page import ArticlePage
 
 
 def test_open_article(driver, skip_onboarding):
-    """РўРµСЃС‚ РїРµСЂРµС…РѕРґР° РІ СЃС‚Р°С‚СЊСЋ РёР· СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РїРѕРёСЃРєР°."""
+    """Тест перехода в статью из результатов поиска."""
     main_page = MainPage(driver)
     article_page = ArticlePage(driver)
 
@@ -13,7 +13,7 @@ def test_open_article(driver, skip_onboarding):
     main_page.click_first_result()
 
     article_title = article_page.get_article_title()
-    print(f"\n[DEBUG] Р—Р°РіРѕР»РѕРІРѕРє РѕС‚РєСЂС‹С‚РѕР№ СЃС‚Р°С‚СЊРё: '{article_title}'")
+    print(f"\n[DEBUG] Заголовок открытой статьи: '{article_title}'")
 
-    with allure.step("РџСЂРѕРІРµСЂРєР°: Р·Р°РіРѕР»РѕРІРѕРє СЃС‚Р°С‚СЊРё СЃРѕРґРµСЂР¶РёС‚ 'Python'"):
-        assert "python" in article_title.lower(), f"РћР¶РёРґР°Р»Рё 'Python' РІ Р·Р°РіРѕР»РѕРІРєРµ СЃС‚Р°С‚СЊРё, РЅРѕ РїРѕР»СѓС‡РёР»Рё: '{article_title}'"
+    with allure.step("Проверка: заголовок статьи содержит 'Python'"):
+        assert "python" in article_title.lower(), f"Ожидали 'Python' в заголовке статьи, но получили: '{article_title}'"

@@ -3,12 +3,12 @@ from pages.onboarding_page import OnboardingPage
 
 
 def test_onboarding_flow(driver):
-    """РџСЂРѕРІРµСЂРєР° РґРёРЅР°РјРёС‡РµСЃРєРѕРіРѕ РїСЂРѕС…РѕР¶РґРµРЅРёСЏ РѕРЅР±РѕСЂРґРёРЅРіР°."""
+    """Проверка динамического прохождения онбординга."""
     onboarding = OnboardingPage(driver)
 
-    with allure.step("РџСЂРѕРІРµСЂРєР° РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РїРµСЂРІРѕРіРѕ СЌРєСЂР°РЅР°"):
+    with allure.step("Проверка отображения первого экрана"):
         assert (
             onboarding.is_primary_text_displayed()
-        ), "РџРµСЂРІС‹Р№ СЌРєСЂР°РЅ РѕРЅР±РѕСЂРґРёРЅРіР° РЅРµ РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ"
+        ), "Первый экран онбординга не отображается"
 
     onboarding.complete_onboarding()
