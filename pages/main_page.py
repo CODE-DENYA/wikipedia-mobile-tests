@@ -19,6 +19,7 @@ class MainPage:
     SEARCH_INPUT = (AppiumBy.ID, "org.wikipedia.alpha:id/search_src_text")
     SEARCH_CLOSE_BTN = (AppiumBy.ID, "org.wikipedia.alpha:id/search_close_btn")
     BOTTOM_SHEET = (AppiumBy.ID, "org.wikipedia.alpha:id/design_bottom_sheet")
+    NO_RESULTS_TEXT = (AppiumBy.XPATH, "//*[@text='No results']")
 
     SEARCH_RESULT_TITLE = (
         AppiumBy.XPATH,
@@ -35,6 +36,10 @@ class MainPage:
         "//*[@resource-id='org.wikipedia.alpha:id/nav_tab_reading_lists' or @content-desc='Saved']",
     )
     NAV_MORE = (AppiumBy.ACCESSIBILITY_ID, "More")
+
+    # Элементы меню More и Settings
+    SETTINGS_BUTTON = (AppiumBy.ID, "org.wikipedia.alpha:id/main_drawer_settings_container")
+    SETTINGS_HEADER_TITLE = (AppiumBy.XPATH, "//android.widget.TextView[@text='Settings']")
 
     # Элементы открытых экранов
     SAVED_HEADER = (AppiumBy.XPATH, "//*[@text='Saved' or @text='All articles']")
@@ -155,6 +160,25 @@ class MainPage:
     def open_more_tab(self):
         self._dismiss_popups()
         self.wait.until(EC.element_to_be_clickable(self.NAV_MORE)).click()
+
+    @allure.step("Переход в раздел 'Settings' из меню More")
+    def open_settings(self):
+        self.open_more_tab()
+        self.wait.until(EC.element_to_be_clickable(self.SETTINGS_BUTTON)).click()
+
+    @allure.step("Проверка отображения экрана 'Settings'")
+    def is_settings_title_displayed(self) -> bool:
+        try:
+            return bool(self.wait.until(EC.visibility_of_element_located(self.SETTINGS_HEADER_TITLE)))
+        except TimeoutException:
+            return False
+
+    @allure.step("Проверка отображения надписи 'No results'")
+    def is_no_results_displayed(self) -> bool:
+        try:
+            return bool(self.wait.until(EC.visibility_of_element_located(self.NO_RESULTS_TEXT)))
+        except TimeoutException:
+            return False
 
     @allure.step("Проверка отображения экрана 'Saved'")
     def is_saved_tab_displayed(self) -> bool:

@@ -23,6 +23,7 @@ class ArticlePage:
         AppiumBy.XPATH,
         "//*[@resource-id='org.wikipedia.alpha:id/design_bottom_sheet'] | //*[contains(@text, 'Collect the articles')]",
     )
+    SAVED_SHEET_BOOKMARK = (AppiumBy.ACCESSIBILITY_ID, "Saved")
     NAVIGATE_UP = (AppiumBy.ACCESSIBILITY_ID, "Navigate up")
 
     def _dismiss_popups(self):
@@ -97,17 +98,35 @@ class ArticlePage:
         except Exception:
             return False
 
+    @allure.step("Проверка наличия активного индикатора 'Saved' в шторке")
+    def is_saved_bookmark_active(self) -> bool:
+        """Проверяет появление зелёной иконки/закладки Saved во всплывающей шторке."""
+        try:
+            return bool(
+                self.wait.until(
+                    EC.visibility_of_element_located(self.SAVED_SHEET_BOOKMARK)
+                )
+            )
+        except Exception:
+            return False
+
+    @allure.step("Клик по значку 'Saved' во всплывающей шторке")
+    def click_saved_bookmark_in_sheet(self):
+        """Нажимает на иконку Saved в шторке для отмены сохранения статьи."""
+        bookmark = self.wait.until(
+            EC.element_to_be_clickable(self.SAVED_SHEET_BOOKMARK)
+        )
+        bookmark.click()
+
     @allure.step("Закрытие статьи и возврат на главный экран")
     def close_article_and_return_to_main(self):
         """Выходит из статьи и режима поиска на главный экран."""
         end_time = time.time() + 12
         while time.time() < end_time:
             self._dismiss_popups()
-            # Прекращаем выход, если на экране появилось нижнее меню с иконкой Saved
             if self.driver.find_elements(AppiumBy.ID, "org.wikipedia.alpha:id/main_nav_tab_container"):
                 return
 
-            # Нажимаем на стрелку Navigate up если она есть, иначе системную кнопку Back
             nav_buttons = self.driver.find_elements(*self.NAVIGATE_UP)
             if nav_buttons:
                 try:
