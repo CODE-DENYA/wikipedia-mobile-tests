@@ -31,7 +31,7 @@ jobs:
 
   test:
     name: Run Appium Tests
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     needs: lint
     steps:
       - name: Checkout repository
@@ -53,6 +53,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm-rules.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: Install Appium & UiAutomator2
         run: |
           npm install -g appium
@@ -61,8 +67,8 @@ jobs:
       - name: Run Android Emulator & Exec Pytest
         uses: ReactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          target: google_apis
+          api-level: 29
+          target: default
           arch: x86_64
           profile: Pixel_6
           script: |
