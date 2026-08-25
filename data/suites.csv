@@ -1,0 +1,8 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","25415","Проверка сохранения запроса в историю и его очистки","tests","2026-08-25","passed","2026-08-25","TestSearchHistory","test_search_history","",""
+"Проверка динамического прохождения онбординга.","5410","test_onboarding_flow","tests","2026-08-25","passed","2026-08-25","","test_onboarding","",""
+"Тест перехода в статью из результатов поиска.","17803","test_open_article","tests","2026-08-25","passed","2026-08-25","","test_article","",""
+"Тест поиска статьи на Wikipedia.","9642","test_search_article","tests","2026-08-25","passed","2026-08-25","","test_search","",""
+"E2E-тест сохранения статьи в закладки и проверки её наличия в разделе Saved.","33153","test_save_article_to_list","tests","2026-08-25","passed","2026-08-25","","test_save_article","",""
+"Тест очистки введенного запроса по кнопке 'Крестик'.","11017","test_clear_search_query","tests","2026-08-25","passed","2026-08-25","","test_clear_search","",""
+"Тест переключения между табами нижнего меню (Saved, More, Home).","7307","test_navigate_bottom_tabs","tests","2026-08-25","passed","2026-08-25","","test_navigation","",""
