@@ -71,10 +71,12 @@ jobs:
           target: default
           arch: x86_64
           profile: pixel
+          emulator-options: -no-window -no-snapshot-save -noaudio -no-boot-anim
           script: |
             appium &
             sleep 8
             pytest
+            pkill -f appium || true
 
       - name: Save Allure Results
         if: always()
