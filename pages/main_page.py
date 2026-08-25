@@ -3,6 +3,7 @@ import allure
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 
 class MainPage:
@@ -10,6 +11,7 @@ class MainPage:
     def __init__(self, driver):
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
+        self.fast_wait = WebDriverWait(driver, 2.0)
 
     # Локаторы поиска
     NAV_SEARCH_TAB = (AppiumBy.ID, "org.wikipedia.alpha:id/nav_tab_search")
@@ -43,39 +45,26 @@ class MainPage:
     HISTORY_ITEM_TITLE = (AppiumBy.ID, "org.wikipedia.alpha:id/page_list_item_title")
 
     def _dismiss_popups(self):
-        """Гарантированно уничтожает всплывающие окна и рекламные модалки по точным локаторам."""
-        try:
-            close_btn = WebDriverWait(self.driver, 1.0).until(
-                EC.element_to_be_clickable((AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"))
-            )
-            close_btn.click()
-            time.sleep(0.5)
-            return
-        except Exception:
-            pass
-
-        try:
-            close_by_desc = WebDriverWait(self.driver, 0.8).until(
-                EC.element_to_be_clickable((AppiumBy.ACCESSIBILITY_ID, "Close"))
-            )
-            close_by_desc.click()
-            time.sleep(0.5)
-            return
-        except Exception:
-            pass
+        """Быстро закрывает известные модальные окна без задержек."""
+        popups = [
+            (AppiumBy.ID, "org.wikipedia.alpha:id/closeButton"),
+            (AppiumBy.ACCESSIBILITY_ID, "Close")
+        ]
+        for locator in popups:
+            elements = self.driver.find_elements(*locator)
+            if elements and elements[0].is_displayed():
+                elements[0].click()
+                return
 
         for text in ["Got it", "GOT IT", "Got It", "Play", "Not now", "Skip"]:
-            try:
-                btn = self.driver.find_elements(AppiumBy.XPATH, f"//*[@text='{text}']")
-                if btn:
-                    btn[0].click()
-                    time.sleep(0.5)
-                    break
-            except Exception:
-                pass
+            elements = self.driver.find_elements(AppiumBy.XPATH, f"//*[@text='{text}']")
+            if elements and elements[0].is_displayed():
+                elements[0].click()
+                return
 
     @allure.step("Открытие экрана поиска")
     def open_search(self):
+        """Устойчивое открытие поиска с циклом ретраев против лагов анимации Android."""
         end_time = time.time() + 15
         while time.time() < end_time:
             self._dismiss_popups()
@@ -85,7 +74,7 @@ class MainPage:
 
             if self.driver.find_elements(*self.BOTTOM_SHEET):
                 self.driver.back()
-                time.sleep(0.5)
+                time.sleep(0.3)
                 continue
 
             cards = self.driver.find_elements(*self.SEARCH_CARD)
@@ -153,7 +142,6 @@ class MainPage:
         self._dismiss_popups()
         if self.driver.find_elements(*self.MORE_LOGIN_BUTTON) or self.driver.find_elements(*self.BOTTOM_SHEET):
             self.driver.back()
-            time.sleep(0.5)
 
         self.wait.until(EC.element_to_be_clickable(self.NAV_HOME)).click()
 
@@ -184,36 +172,28 @@ class MainPage:
 
     @allure.step("Очистка всей истории поиска")
     def clear_search_history(self):
-        """Нажимает на иконку удаления истории и гарантированно подтверждает очистку в диалоге."""
         clear_btn = self.wait.until(EC.element_to_be_clickable(self.CLEAR_HISTORY_BTN))
         clear_btn.click()
-        
+
         confirm_locators = [
             (AppiumBy.ID, "android:id/button1"),
             (AppiumBy.XPATH, "//*[@text='OK' or @text='Clear' or @text='Удалить' or @text='Yes' or @text='Да']")
         ]
-        
+
         for locator in confirm_locators:
             try:
-                confirm_btn = WebDriverWait(self.driver, 3).until(
-                    EC.element_to_be_clickable(locator)
-                )
+                confirm_btn = self.fast_wait.until(EC.element_to_be_clickable(locator))
                 confirm_btn.click()
                 break
-            except Exception:
+            except TimeoutException:
                 pass
-                
-        time.sleep(1.0)
+
+        time.sleep(0.5)
 
     @allure.step("Проверка наличия элемента '{title}' в истории поиска")
     def is_history_item_present(self, title: str) -> bool:
-        """Проверяет присутствие статьи в истории по наличию элемента в иерархии."""
         locator = (AppiumBy.XPATH, f"//*[@resource-id='org.wikipedia.alpha:id/page_list_item_title' and @text='{title}']")
         try:
-            return bool(
-                WebDriverWait(self.driver, 5).until(
-                    EC.presence_of_element_located(locator)
-                )
-            )
-        except Exception:
+            return bool(self.fast_wait.until(EC.presence_of_element_located(locator)))
+        except TimeoutException:
             return False
