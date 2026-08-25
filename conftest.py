@@ -1,10 +1,11 @@
-import os
 import time
 import allure
 import pytest
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 from appium.webdriver.common.appiumby import AppiumBy
+
+import config
 from pages.onboarding_page import OnboardingPage
 
 
@@ -33,20 +34,17 @@ def driver():
     options = UiAutomator2Options()
     options.platform_name = "Android"
     options.automation_name = "UiAutomator2"
-    options.device_name = "emulator-5554"
+    options.device_name = config.DEVICE_NAME
 
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    app_path = os.path.join(base_dir, "app", "wikipedia.apk")
-
-    options.app = app_path
-    options.app_package = "org.wikipedia.alpha"
-    options.app_activity = "org.wikipedia.main.MainActivity"
+    options.app = config.APP_PATH
+    options.app_package = config.APP_PACKAGE
+    options.app_activity = config.APP_ACTIVITY
 
     # Оптимизации скорости работы Appium
     options.skip_logcat_capture = True
     options.disable_window_animation = True
 
-    driver = webdriver.Remote("http://127.0.0.1:4723", options=options)
+    driver = webdriver.Remote(config.APPIUM_URL, options=options)
     driver.implicitly_wait(0)
 
     yield driver
